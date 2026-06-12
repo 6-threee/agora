@@ -68,6 +68,38 @@ To confirm or adjust detection:
 This lets every other part of the extension be tested even before the live
 selectors are confirmed.
 
+## Terminal (Claude Code) status line
+
+The browser card needs a web page, so it cannot run in Claude Code in the
+terminal. The terminal version is a **status-line** flashcard instead: it shows
+a rotating `word → translation` from the same deck in Claude Code's bottom bar.
+
+It is passive (no tap-to-reveal, no Got it / Missed; a terminal status line is
+not interactive), but it reads the **same deck file** and gives you vocab
+exposure while Claude works.
+
+`terminal/statusline.js` reads the deck and prints one rotating card. To enable
+it, add this to `~/.claude/settings.json` (run it with bun):
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.bun/bin/bun ~/Desktop/wait-and-learn/terminal/statusline.js",
+    "refreshInterval": 2
+  }
+}
+```
+
+`refreshInterval` is what makes the word rotate while you wait. By default Claude
+Code only re-runs the status line at turn boundaries (after each assistant
+message); a value of `2` re-runs it every 2 seconds so the card changes during a
+long "think". Raise it to slow the rotation, remove it to only change per turn.
+
+The script is fail-silent: on any error it prints nothing rather than break your
+status bar. It keys its rotation counter by `session_id` (from the JSON Claude
+Code pipes in), so concurrent sessions rotate independently.
+
 ## Importing a deck
 
 Open the extension's options page (right-click the extension icon → **Options**,
