@@ -52,10 +52,33 @@ WL.Card = (function () {
     "  background: rgba(0, 0, 0, 0.05);",
     "  border-radius: 5px;",
     "  padding: 2px 7px;",
-    "  margin-bottom: 10px;",
+    "  margin: 0;",
     "}",
     "@media (prefers-color-scheme: dark) {",
     "  .wl-lang { color: #c7c7c7; background: rgba(255, 255, 255, 0.10); }",
+    "}",
+    ".wl-header {",
+    "  display: flex;",
+    "  align-items: center;",
+    "  justify-content: space-between;",
+    "  margin-bottom: 10px;",
+    "}",
+    ".wl-speak {",
+    "  font: inherit;",
+    "  line-height: 1;",
+    "  border: none;",
+    "  background: transparent;",
+    "  color: #6b7280;",
+    "  cursor: pointer;",
+    "  padding: 2px 4px;",
+    "  border-radius: 6px;",
+    "  font-size: 15px;",
+    "  margin-left: auto;", // always sit on the right, even if the lang badge is hidden
+    "}",
+    ".wl-speak:hover { background: rgba(0, 0, 0, 0.06); color: #1a1a1a; }",
+    "@media (prefers-color-scheme: dark) {",
+    "  .wl-speak { color: #b5b5b5; }",
+    "  .wl-speak:hover { background: rgba(255, 255, 255, 0.10); color: #f2f2f2; }",
     "}",
     ".wl-front-zone { cursor: pointer; }",
     ".wl-text {",
@@ -129,6 +152,7 @@ WL.Card = (function () {
   var state = null;
   var awaitingAnswer = false;
   var answerHandler = null;
+  var speakHandler = null;
 
   var host = null;       // host <div> on document.body
   var shadow = null;     // shadow root
@@ -155,6 +179,22 @@ WL.Card = (function () {
 
     var lang = document.createElement("span");
     lang.className = "wl-lang wl-hidden";
+
+    // Header row: language badge on the left, speaker button on the right.
+    var header = document.createElement("div");
+    header.className = "wl-header";
+
+    var speakBtn = document.createElement("button");
+    speakBtn.type = "button";
+    speakBtn.className = "wl-speak";
+    speakBtn.textContent = "🔊"; // speaker emoji
+    speakBtn.setAttribute("aria-label", "Pronounce");
+    speakBtn.title = "Pronounce";
+    // Hide the speaker entirely if the browser has no speech synthesis.
+    if (!("speechSynthesis" in window)) speakBtn.classList.add("wl-hidden");
+
+    header.appendChild(lang);
+    header.appendChild(speakBtn);
 
     var frontZone = document.createElement("div");
     frontZone.className = "wl-front-zone";
@@ -202,7 +242,7 @@ WL.Card = (function () {
     backWrap.appendChild(exampleText);
     backWrap.appendChild(buttons);
 
-    card.appendChild(lang);
+    card.appendChild(header);
     card.appendChild(frontZone);
     card.appendChild(backWrap);
 
@@ -218,6 +258,10 @@ WL.Card = (function () {
     });
     missedBtn.addEventListener("click", function () {
       onAnswerClick(false);
+    });
+    speakBtn.addEventListener("click", function (ev) {
+      ev.stopPropagation(); // don't trigger frontZone reveal
+      if (typeof speakHandler === "function") speakHandler("front");
     });
 
     els = {
@@ -256,6 +300,7 @@ WL.Card = (function () {
     build();
     card = card || {};
     answerHandler = (opts && opts.onAnswer) || null;
+    speakHandler = (opts && opts.onSpeak) || null;
     awaitingAnswer = false;
     state = "FRONT";
 

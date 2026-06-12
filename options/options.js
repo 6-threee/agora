@@ -19,6 +19,7 @@
   var importMsg = document.getElementById("import-msg");
   var resetBtn = document.getElementById("reset-btn");
   var resetMsg = document.getElementById("reset-msg");
+  var speakAutoCheck = document.getElementById("speak-auto");
 
   function showMsg(el, text, ok) {
     el.textContent = text;
@@ -216,11 +217,30 @@
     }
   });
 
+  // Auto-speak preference (stored under wl.speakAuto, default true). Read/write
+  // chrome.storage.local directly; content.js listens for changes live.
+  function loadSpeakAuto() {
+    try {
+      chrome.storage.local.get("wl.speakAuto", function (res) {
+        if (chrome.runtime && chrome.runtime.lastError) { speakAutoCheck.checked = true; return; }
+        speakAutoCheck.checked = (res && typeof res["wl.speakAuto"] === "boolean") ? res["wl.speakAuto"] : true;
+      });
+    } catch (e) {
+      speakAutoCheck.checked = true;
+    }
+  }
+  if (speakAutoCheck) {
+    speakAutoCheck.addEventListener("change", function () {
+      try { chrome.storage.local.set({ "wl.speakAuto": speakAutoCheck.checked }); } catch (e) {}
+    });
+  }
+
   // Boot.
   if (!DeckStore) {
     console.error("Wait & Learn: WL.DeckStore not found. Check script load order.");
     return;
   }
+  loadSpeakAuto();
   refreshAll().catch(function (e) {
     console.error("Wait & Learn: options init failed", e);
   });

@@ -18,11 +18,17 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
   // receive a concrete state, regardless of whether they accept undefined.
   var currentId = null;
   var currentState = null;
+  // The card object currently shown (front/back/lang), for speech.
+  var currentCard = null;
 
   // True while Claude is generating (between Detector onStart and onEnd). Drives
   // the "keep feeding cards until done thinking" loop: after each answer, if we
   // are still generating, the next due card is shown.
   var generating = false;
+
+  // Speak the target word aloud automatically when a card appears. Default on;
+  // toggled from the options page (stored under wl.speakAuto).
+  var speakAuto = true;
 
   // Pick a due card and show it. Used by onStart and the dev hotkey.
   function pickAndShow() {
@@ -52,10 +58,25 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
       if (deck && deck.lang && !card.lang) {
         card = { id: card.id, front: card.front, back: card.back, example: card.example, lang: deck.lang };
       }
+      currentCard = card;
 
-      WL.Card.show(card, { onAnswer: onAnswer });
+      WL.Card.show(card, { onAnswer: onAnswer, onSpeak: onSpeak });
+
+      // Auto-speak the target word when it appears (best-effort: the browser may
+      // require one prior interaction before allowing speech on an auto-shown
+      // card; the speaker button always works).
+      if (speakAuto && WL.Speech) WL.Speech.speak(card.front, card.lang);
     } catch (e) {
       // Fail silent - never throw into the page.
+    }
+  }
+
+  // Speaker button on the card: pronounce the target-language word (the front).
+  function onSpeak() {
+    try {
+      if (currentCard && WL.Speech) WL.Speech.speak(currentCard.front, currentCard.lang);
+    } catch (e) {
+      // Fail silent.
     }
   }
 
@@ -80,6 +101,7 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
         WL.Card.dismiss();
         currentId = null;
         currentState = null;
+        currentCard = null;
         WL.DeckStore.saveState(id, state).catch(function () {});
       }
     } catch (e) {
@@ -95,6 +117,7 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
       WL.Card.dismiss();
       currentId = null;
       currentState = null;
+      currentCard = null;
       WL.DeckStore.saveState(id, state).catch(function () {});
 
       // Keep going while Claude is still thinking: after the current card fades
@@ -127,9 +150,29 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
     }
   }
 
+  // Load the auto-speak preference (default true) and keep it live if changed
+  // from the options page. Never throws into the page.
+  function loadSpeakSetting() {
+    try {
+      chrome.storage.local.get("wl.speakAuto", function (res) {
+        if (chrome.runtime && chrome.runtime.lastError) return;
+        if (res && typeof res["wl.speakAuto"] === "boolean") speakAuto = res["wl.speakAuto"];
+      });
+      chrome.storage.onChanged.addListener(function (changes, area) {
+        if (area === "local" && changes["wl.speakAuto"]) {
+          var nv = changes["wl.speakAuto"].newValue;
+          if (typeof nv === "boolean") speakAuto = nv;
+        }
+      });
+    } catch (e) {
+      // Fail silent - keep the default.
+    }
+  }
+
   // Boot.
   (function init() {
     try {
+      loadSpeakSetting();
       WL.DeckStore.init()
         .then(function () {
           WL.Detector.start({ onStart: onStart, onEnd: onEnd });

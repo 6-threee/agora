@@ -15,7 +15,6 @@ account or server, and stores all progress locally in `chrome.storage.local`.
 3. Click **Load unpacked**.
 4. Select the project folder: `/Users/jonathanluis/Desktop/wait-and-learn`.
 
-The extension loads with Chrome's default puzzle-piece icon (no branding in v1).
 After loading, refresh any open claude.ai tab so the content script attaches.
 
 ## How to use it
@@ -29,9 +28,16 @@ flashcard fades in at the bottom-right corner of the page.
 3. Tap **Got it** or **Missed**. Your answer feeds the spaced-repetition
    scheduler, which decides when you next see that card.
 
-If you do not answer before Claude finishes, the card quietly fades away and is
-marked as "seen" so it is not immediately shown again. If you are mid-answer
-(the card is revealed and waiting), it stays put so you do not lose the rep.
+While Claude keeps generating, answering one card brings up the next, so a long
+"think" becomes a short flashcard run. If you do not answer before Claude
+finishes, the card quietly fades away and is marked as "seen" so it is not
+immediately shown again. If you are mid-answer (the card is revealed and
+waiting), it stays put so you do not lose the rep.
+
+**Pronunciation:** each card has a speaker button (🔊) that says the word using
+your computer's built-in voices (macOS ships Spanish, French, and others). By
+default the word is also spoken automatically when a card appears; turn that off
+on the options page. No account or API key, nothing leaves your device.
 
 If the card never appears, nothing is broken. The extension fails silent by
 design (see the design notes below) and never interferes with Claude.
