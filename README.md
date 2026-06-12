@@ -36,13 +36,13 @@ marked as "seen" so it is not immediately shown again. If you are mid-answer
 If the card never appears, nothing is broken. The extension fails silent by
 design (see the design notes below) and never interferes with Claude.
 
-## Dev hotkey: Ctrl+Shift+L
+## Dev hotkey: Ctrl+Shift+L (or Cmd+Shift+L on Mac)
 
 Detection of the "Claude is generating" signal depends on Claude's live DOM,
 which can change. The detector ships with a CONFIG block of **best-guess**
 candidate selectors that must be confirmed against the real page.
 
-Press **Ctrl+Shift+L** on any claude.ai tab to:
+Press **Ctrl+Shift+L** (or **Cmd+Shift+L** on macOS) on any claude.ai tab to:
 
 1. Force-show a flashcard immediately, so you can test the reveal/answer flow
    and the scheduler without waiting for a real generation.
@@ -53,7 +53,7 @@ To confirm or adjust detection:
 
 1. Open the browser console (Cmd+Opt+J) on a claude.ai tab.
 2. Send a prompt so Claude is actively generating.
-3. Press **Ctrl+Shift+L** and read the `console.table`. The selector that shows
+3. Press **Ctrl+Shift+L** (or **Cmd+Shift+L**) and read the `console.table`. The selector that shows
    `matched: true` only while Claude is generating is the correct one.
 4. If none of the bundled selectors match the live "stop generating" control,
    edit `CONFIG.GENERATING_SELECTORS` at the top of `src/detector.js` to the

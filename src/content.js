@@ -93,12 +93,15 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
     }
   }
 
-  // Dev hotkey: Ctrl+Shift+L - force-pick & show a card, and log the
-  // match-state of every candidate selector so the live selector can be
-  // confirmed in one session.
+  // Dev hotkey: Ctrl+Shift+L (or Cmd+Shift+L on Mac) - force-pick & show a
+  // card, and log the match-state of every candidate selector so the live
+  // selector can be confirmed in one session.
   function onKeyDown(ev) {
     try {
-      if (ev.ctrlKey && ev.shiftKey && ev.key && ev.key.toLowerCase() === "l") {
+      // Accept Control OR Command: on macOS users naturally press Cmd, which
+      // sets metaKey (not ctrlKey). Without metaKey the hotkey silently no-ops.
+      if ((ev.ctrlKey || ev.metaKey) && ev.shiftKey && ev.key && ev.key.toLowerCase() === "l") {
+        ev.preventDefault();
         pickAndShow();
         console.table(WL.Detector.debugSelectors());
       }

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wait & Learn test harness</title>
+  <style>
+    body { background:#0f1012; color:#e8e8e8; font:15px -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; padding:28px; }
+    h1 { font-size:18px; margin:0 0 6px; }
+    p { color:#a9adb4; max-width:640px; }
+    button { font:inherit; font-weight:600; padding:9px 14px; border-radius:8px; border:1px solid #3a3d44; background:#1d1f23; color:#e8e8e8; cursor:pointer; margin-right:8px; }
+    button:hover { background:#26292e; }
+    #status { margin-top:18px; white-space:pre-wrap; font-family:ui-monospace,Menlo,monospace; font-size:13px; color:#9be59b; }
+    .sim { margin-top:22px; padding:14px; border:1px dashed #3a3d44; border-radius:10px; }
+  </style>
+</head>
+<body>
+  <h1>Wait &amp; Learn - test harness</h1>
+  <p>Simulates claude.ai so the real extension source (Card UI, Detector, hotkey wiring, SRS) can be
+     exercised without the live site. <b>Toggle generation</b> adds/removes a Stop button matching the
+     detector's selector; the extension should show a flashcard while it is present.</p>
+
+  <div class="sim">
+    <button id="toggle">Toggle "Claude is generating"</button>
+    <button id="hotkey-ctrl">Fire Ctrl+Shift+L (correct)</button>
+    <button id="hotkey-meta">Fire Cmd+Shift+L (Mac mistake)</button>
+  </div>
+
+  <div id="status">loading...</div>
+
+  <!-- chrome.storage stub (callback-style, matches deck.js usage) BEFORE extension scripts -->
+  <script>
+    (function () {
+      var mem = {};
+      function pick(keys) {
+        var out = {};
+        if (keys == null) { for (var k in mem) out[k] = mem[k]; return out; }
+        if (typeof keys === "string") { if (keys in mem) out[keys] = mem[keys]; return out; }
+        if (Array.isArray(keys)) { keys.forEach(function (k) { if (k in mem) out[k] = mem[k]; }); return out; }
+        Object.keys(keys).forEach(function (k) { out[k] = (k in mem) ? mem[k] : keys[k]; });
+        return out;
+      }
+      window.chrome = {
+        runtime: { lastError: null, id: "harness" },
+        storage: { local: {
+          get: function (keys, cb) { var out = pick(keys); setTimeout(function () { cb(out); }, 0); },
+          set: function (obj, cb) { Object.keys(obj).forEach(function (k) { mem[k] = obj[k]; }); setTimeout(function () { cb && cb(); }, 0); },
+          remove: function (keys, cb) { (Array.isArray(keys) ? keys : [keys]).forEach(function (k) { delete mem[k]; }); setTimeout(function () { cb && cb(); }, 0); }
+        } }
+      };
+    })();
+  </script>
+
+  <!-- extension scripts, manifest order -->
+  <script src="../src/scheduler.js"></script>
+  <script src="../decks/spanish-starter.js"></script>
+  <script src="../src/deck.js"></script>
+  <script src="../src/detector.js"></script>
+  <script src="../src/card.js"></script>
+  <script src="../src/content.js"></script>
+
+  <!-- harness controls -->
+  <script>
+    var on = false;
+    document.getElementById("toggle").addEventListener("click", function () {
+      on = !on;
+      var existing = document.getElementById("fake-stop");
+      if (on && !existing) {
+        var b = document.createElement("button");
+        b.id = "fake-stop";
+        b.setAttribute("aria-label", "Stop response");
+        b.textContent = "Stop";
+        document.body.appendChild(b);
+      } else if (!on && existing) {
+        existing.remove();
+      }
+    });
+    document.getElementById("hotkey-ctrl").addEventListener("click", function () {
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "L", ctrlKey: true, shiftKey: true, bubbles: true }));
+    });
+    document.getElementById("hotkey-meta").addEventListener("click", function () {
+      document.dispatchEvent(new KeyboardEvent("keydown", { key: "L", metaKey: true, shiftKey: true, bubbles: true }));
+    });
+
+    // Report injection + init state after boot.
+    setTimeout(function () {
+      var s = document.getElementById("status");
+      var WL = window.WL || {};
+      var lines = [];
+      lines.push("WL: " + (window.WL ? "object" : "UNDEFINED"));
+      lines.push("modules: " + (window.WL ? Object.keys(window.WL).join(", ") : "-"));
+      try { lines.push("activeDeck: " + (WL.DeckStore && WL.DeckStore.getActiveDeck() ? WL.DeckStore.getActiveDeck().name : "(not initialized)")); }
+      catch (e) { lines.push("activeDeck: ERR " + e.message); }
+      try { lines.push("entries: " + (WL.DeckStore ? WL.DeckStore.getEntries().length : "-")); }
+      catch (e) { lines.push("entries: ERR " + e.message); }
+      try { lines.push("selectors: " + JSON.stringify(WL.Detector && WL.Detector.debugSelectors())); }
+      catch (e) { lines.push("selectors: ERR " + e.message); }
+      s.textContent = lines.join("\n");
+    }, 400);
+  </script>
+</body>
+</html>
