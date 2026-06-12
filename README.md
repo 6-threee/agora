@@ -71,34 +71,67 @@ selectors are confirmed.
 ## Terminal (Claude Code) status line
 
 The browser card needs a web page, so it cannot run in Claude Code in the
-terminal. The terminal version is a **status-line** flashcard instead: it shows
-a rotating `word → translation` from the same deck in Claude Code's bottom bar.
+terminal. The terminal version is a **status-line** flashcard instead, in Claude
+Code's bottom bar. It reads the **same deck** and runs the **same Leitner
+scheduler** as the browser (with its own state under `~/.wait-and-learn/`,
+separate from the browser's storage).
 
-It is passive (no tap-to-reveal, no Got it / Missed; a terminal status line is
-not interactive), but it reads the **same deck file** and gives you vocab
-exposure while Claude works.
+What it does:
 
-`terminal/statusline.js` reads the deck and prints one rotating card. To enable
-it, add this to `~/.claude/settings.json` (run it with bun):
+- **Recall rhythm:** it shows the word alone first (`📘 ES el perro · ?`), then
+  reveals the translation on the next refresh (`📘 ES el perro → the dog`), then
+  moves on. That recreates the "try to recall, then check" moment of a flashcard
+  in a bar that cannot be clicked.
+- **Memory:** it tracks exposure per word and (via the shared scheduler) shows
+  the words you have seen least, and the words you have missed, more often. State
+  persists across sessions and restarts.
+- **Grading (`wl got` / `wl missed`):** the one bit of interactivity a status
+  line cannot do itself. Grade the word currently on screen and it feeds real
+  spaced repetition: `got` promotes it (you see it less), `missed` drops it to
+  box 1 (you see it more). The stored state always matches the displayed card, so
+  you grade exactly what you see.
+
+### Enable it
+
+Add this to `~/.claude/settings.json` (replaces the default bottom bar):
 
 ```json
 {
   "statusLine": {
     "type": "command",
     "command": "~/.bun/bin/bun ~/Desktop/wait-and-learn/terminal/statusline.js",
-    "refreshInterval": 2
+    "refreshInterval": 3
   }
 }
 ```
 
-`refreshInterval` is what makes the word rotate while you wait. By default Claude
-Code only re-runs the status line at turn boundaries (after each assistant
-message); a value of `2` re-runs it every 2 seconds so the card changes during a
-long "think". Raise it to slow the rotation, remove it to only change per turn.
+`refreshInterval` (seconds, min 1) is what makes it rotate while you wait. By
+default Claude Code only re-runs the status line at turn boundaries; a value of
+`3` re-runs it every 3 seconds so the card advances during a long "think". Raise
+it to slow down, remove it to change only per turn.
 
-The script is fail-silent: on any error it prints nothing rather than break your
-status bar. It keys its rotation counter by `session_id` (from the JSON Claude
-Code pipes in), so concurrent sessions rotate independently.
+### Set up the `wl` grading command
+
+`terminal/wl` is a wrapper around `terminal/grade.js`. Add an alias so you can
+just type `wl got`:
+
+```sh
+echo "alias wl='$HOME/Desktop/wait-and-learn/terminal/wl'" >> ~/.zshrc
+source ~/.zshrc
+```
+
+Then, while a word is on screen: `wl got` if you knew it, `wl missed` if you did
+not. It prints a one-line confirmation and the status line moves to a fresh card.
+
+### Notes
+
+- Everything is fail-silent: on any error the status line prints nothing rather
+  than break your bar.
+- The rhythm state is global (not per-session) so the `wl` command can target the
+  shown card. If you run several Claude Code sessions at once they share one
+  rhythm; the SRS progress is shared too (one learner), which is what you want.
+- It uses the bundled Spanish deck. Switching decks is a browser-side feature for
+  now.
 
 ## Importing a deck
 
