@@ -62,18 +62,22 @@ try {
   // Separate-terminal launcher, so the review loop never mixes with the work
   // chat. Lives at ~/.agora/agora (stable); the user aliases it.
   const launcherPath = path.join(stateDir, "agora");
+  // Pick the interpreter by existence (not by exit code) and exec it, so Ctrl-C
+  // quitting the interactive loop cannot fall through and relaunch a 2nd session.
   const launcher = [
     "#!/bin/sh",
     "# Agora terminal CLI - run in a SEPARATE terminal from your Claude Code work.",
     'RT="$HOME/.agora/runtime"',
+    'if command -v bun >/dev/null 2>&1; then RUN=bun; else RUN=node; fi',
     'case "$1" in',
-    '  review) bun "$RT/review.mjs" 2>/dev/null || node "$RT/review.mjs" ;;',
-    '  deck) shift; bun "$RT/deck.mjs" "$@" 2>/dev/null || node "$RT/deck.mjs" "$@" ;;',
+    '  review) exec "$RUN" "$RT/review.mjs" ;;',
+    '  deck) shift; exec "$RUN" "$RT/deck.mjs" "$@" ;;',
     '  *) echo "Agora: agora review   (study loop)   |   agora deck [language]" ;;',
     "esac",
     ""
   ].join("\n");
-  try { fs.writeFileSync(launcherPath, launcher); fs.chmodSync(launcherPath, 0o755); } catch (e) {}
+  let launcherOk = false;
+  try { fs.writeFileSync(launcherPath, launcher); fs.chmodSync(launcherPath, 0o755); launcherOk = true; } catch (e) {}
 
   const cfg = readConfig();
 
@@ -139,8 +143,12 @@ try {
     console.log("");
     console.log("Restart Claude Code to load it. Switch language with /agora:deck <language>.");
     console.log("");
-    console.log("Study (recall + grading) in a SEPARATE terminal, so it never mixes with");
-    console.log("your work chat:  alias agora=\"$HOME/.agora/agora\"   then:  agora review");
+    if (launcherOk) {
+      console.log("Study (recall + grading) in a SEPARATE terminal, so it never mixes with");
+      console.log("your work chat:  alias agora=\"$HOME/.agora/agora\"   then:  agora review");
+    } else {
+      console.log("Study in a SEPARATE terminal with:  bun ~/.agora/runtime/review.mjs");
+    }
     process.exit(0);
   }
 
@@ -180,8 +188,12 @@ try {
   console.log("");
   console.log("Prefer it only while Claude thinks? Run /agora:setup spinner.");
   console.log("");
-  console.log("Tip: study in a SEPARATE terminal to keep this chat clean:");
-  console.log("  alias agora=\"$HOME/.agora/agora\"   then:  agora review");
+  if (launcherOk) {
+    console.log("Tip: study in a SEPARATE terminal to keep this chat clean:");
+    console.log("  alias agora=\"$HOME/.agora/agora\"   then:  agora review");
+  } else {
+    console.log("Tip: study in a SEPARATE terminal:  bun ~/.agora/runtime/review.mjs");
+  }
 } catch (e) {
   console.log("Agora setup failed: " + (e && e.message ? e.message : e));
   process.exit(1);

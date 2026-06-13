@@ -2,8 +2,8 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "agora",
   "displayName": "Agora",
-  "version": "0.1.0",
-  "description": "Language flashcards in your Claude Code status line, with spaced repetition. Run /agora:setup to wire it into your status bar, then /agora:wl got | missed to grade the word on screen.",
+  "version": "0.2.0",
+  "description": "Language flashcards in Claude Code: status line or thinking spinner, with spaced repetition. /agora:setup (or /agora:setup spinner) to install, /agora:deck to switch language, and study in a separate terminal with the agora review loop.",
   "author": { "name": "Jonathan" },
   "keywords": ["language", "flashcards", "spaced-repetition", "statusline", "learning"]
 }
