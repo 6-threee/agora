@@ -1,0 +1,31 @@
+{
+  "name": "wait-and-learn-spinner",
+  "displayName": "Wait & Learn: Flashcards while Claude thinks",
+  "description": "Turns Claude Code's thinking spinner into language flashcards. Your vocabulary appears in the thinking text while Claude generates. Free, no ads, no account.",
+  "version": "0.1.0",
+  "publisher": "your-publisher-id",
+  "license": "MIT",
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Education", "Other"],
+  "keywords": ["language", "flashcards", "spaced-repetition", "claude", "learning"],
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "commands": [
+      { "command": "waitAndLearn.switchLanguage", "title": "Wait & Learn: Switch Language" },
+      { "command": "waitAndLearn.enable", "title": "Wait & Learn: Enable (patch Claude Code thinking verbs)" },
+      { "command": "waitAndLearn.disable", "title": "Wait & Learn: Disable (restore Claude Code thinking verbs)" }
+    ],
+    "configuration": {
+      "title": "Wait & Learn",
+      "properties": {
+        "waitAndLearn.deck": {
+          "type": "string",
+          "default": "spanish",
+          "enum": ["spanish", "french", "german"],
+          "description": "Which language deck to show in the Claude Code thinking spinner."
+        }
+      }
+    }
+  }
+}
