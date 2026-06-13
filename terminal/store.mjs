@@ -33,16 +33,19 @@ function tryRequire(candidates) {
   return null;
 }
 
-// Decks the user has: the bundled Starter, plus any extra decks added by
-// dropping deck files into ~/.agora/decks/. That drop-in folder is how you
-// add languages; no license server, no network call.
+// Decks the user has: the bundled language decks (250 words each), plus any
+// extra decks added by dropping deck files into ~/.agora/decks/. That drop-in
+// folder is how you add more languages; no license server, no network call.
+const BUNDLED = ["es", "fr", "de", "it", "pt"]; // Spanish, French, German, Italian, Portuguese
 export const decks = (function loadAllDecks() {
   const out = [];
-  const bundled = tryRequire([
-    path.join(HERE, "spanish-starter.js"),                 // flat plugin runtime
-    path.join(HERE, "..", "decks", "spanish-starter.js")   // dev layout
-  ]);
-  if (bundled && Array.isArray(bundled.cards)) out.push(bundled);
+  for (const code of BUNDLED) {
+    const d = tryRequire([
+      path.join(HERE, code + ".js"),                 // flat plugin runtime
+      path.join(HERE, "..", "decks", code + ".js")   // dev layout
+    ]);
+    if (d && Array.isArray(d.cards) && !out.some(function (x) { return x.id === d.id; })) out.push(d);
+  }
   const userDir = path.join(os.homedir(), ".agora", "decks");
   try {
     for (const f of fs.readdirSync(userDir).sort()) {

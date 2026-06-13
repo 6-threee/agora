@@ -66,12 +66,18 @@ Then **restart Claude Code**.
 - Uninstalling the plugin leaves `~/.agora/` in place; delete it by hand
   to remove progress, and restore your old status line from the
   `~/.claude/settings.json.wl-backup` if you want.
-- Ships the bundled Spanish deck. To change the rotation interval, edit
-  `refreshInterval` under `statusLine` in `~/.claude/settings.json`.
+- Ships 5 bundled decks (Spanish, French, German, Italian, Portuguese), 250
+  words each. Switch with `/agora:deck <language>`. To change the rotation
+  interval, edit `refreshInterval` under `statusLine` in `~/.claude/settings.json`.
+
+## Support
+
+Agora is free and always will be. If it helps you, you can pay what you want
+(including nothing) here: **https://myaibiz.gumroad.com/l/keyulq** — thank you.
 
 ## Layout
 
-- `commands/` - the `setup`, `wl`, and `deck` commands
-- `setup.js` - the installer (run by the setup command)
+- `commands/` - the `setup`, `wl`, `deck`, `study`, `pause`, `resume` commands
+- `setup.mjs` - the installer (run by the setup command)
 - `runtime/` - self-contained copy of the deck, scheduler, and terminal scripts
   (regenerate from source with `./sync.sh`)
