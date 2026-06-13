@@ -6,6 +6,7 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { decks, deck as activeDeck, saveRhythm } from "./store.mjs";
+import { applySpinner, verbsForDeck } from "./settings.mjs";
 
 const arg = String(process.argv.slice(2).join(" ") || "").trim().toLowerCase();
 const cfgPath = path.join(os.homedir(), ".agora", "config.json");
@@ -56,6 +57,14 @@ try {
   }
   saveRhythm({}); // start the next refresh fresh on the new deck
   console.log(`\x1b[32m✓\x1b[0m active deck: ${match.name} (${match.lang}, ${match.cards.length} cards)`);
+  // Spinner mode: the thinking-spinner words come from settings.json, so update
+  // them to the newly selected deck (takes effect on the next Claude Code start).
+  if (cfg.mode === "spinner") {
+    const ok = applySpinner(verbsForDeck(match));
+    console.log(ok
+      ? "Spinner updated. Restart Claude Code to load the new words."
+      : "(could not update spinnerVerbs in settings.json; the deck still switched)");
+  }
 } catch (e) {
   console.log("Agora: deck switch failed.");
 }
