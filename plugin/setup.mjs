@@ -59,6 +59,22 @@ try {
     }
   }
 
+  // Separate-terminal launcher, so the review loop never mixes with the work
+  // chat. Lives at ~/.agora/agora (stable); the user aliases it.
+  const launcherPath = path.join(stateDir, "agora");
+  const launcher = [
+    "#!/bin/sh",
+    "# Agora terminal CLI - run in a SEPARATE terminal from your Claude Code work.",
+    'RT="$HOME/.agora/runtime"',
+    'case "$1" in',
+    '  review) bun "$RT/review.mjs" 2>/dev/null || node "$RT/review.mjs" ;;',
+    '  deck) shift; bun "$RT/deck.mjs" "$@" 2>/dev/null || node "$RT/deck.mjs" "$@" ;;',
+    '  *) echo "Agora: agora review   (study loop)   |   agora deck [language]" ;;',
+    "esac",
+    ""
+  ].join("\n");
+  try { fs.writeFileSync(launcherPath, launcher); fs.chmodSync(launcherPath, 0o755); } catch (e) {}
+
   const cfg = readConfig();
 
   // 2. Read settings.json once (shared by both modes). Never clobber bad JSON.
@@ -122,6 +138,9 @@ try {
     console.log("  status line: " + (ours ? "Agora's status-line entry removed (back to default)." : "left untouched."));
     console.log("");
     console.log("Restart Claude Code to load it. Switch language with /agora:deck <language>.");
+    console.log("");
+    console.log("Study (recall + grading) in a SEPARATE terminal, so it never mixes with");
+    console.log("your work chat:  alias agora=\"$HOME/.agora/agora\"   then:  agora review");
     process.exit(0);
   }
 
@@ -160,6 +179,9 @@ try {
   console.log("  /agora:wl missed   (you didn't)");
   console.log("");
   console.log("Prefer it only while Claude thinks? Run /agora:setup spinner.");
+  console.log("");
+  console.log("Tip: study in a SEPARATE terminal to keep this chat clean:");
+  console.log("  alias agora=\"$HOME/.agora/agora\"   then:  agora review");
 } catch (e) {
   console.log("Agora setup failed: " + (e && e.message ? e.message : e));
   process.exit(1);
