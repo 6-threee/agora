@@ -65,6 +65,25 @@ export const Scheduler = tryRequire([
 
 const DIR = path.join(os.homedir(), ".wait-and-learn");
 
+// Self-heal orphaned temp files. A status-line process SIGKILLed between the
+// writeJson temp-write and the rename never runs its catch/unlink, leaving a
+// stale *.tmp.<pid>. Once per process at load, drop any whose owning PID is dead.
+(function sweepOrphanTmp() {
+  try {
+    for (const f of fs.readdirSync(DIR)) {
+      const m = f.match(/\.tmp\.(\d+)$/);
+      if (!m) continue;
+      const pid = Number(m[1]);
+      if (pid === process.pid) continue; // never our own in-flight temp
+      try { process.kill(pid, 0); } catch (e) {
+        // ESRCH = no such process, so the temp is orphaned and safe to remove.
+        // EPERM (or success) means the process is alive; leave its temp alone.
+        if (e.code === "ESRCH") { try { fs.unlinkSync(path.join(DIR, f)); } catch (e2) {} }
+      }
+    }
+  } catch (e) {}
+})();
+
 function ensureDir() { try { fs.mkdirSync(DIR, { recursive: true }); } catch (e) {} }
 function safeId(s) { return String(s || "deck").replace(/[^a-zA-Z0-9._-]/g, "_"); }
 
