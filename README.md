@@ -13,7 +13,7 @@ account or server, and stores all progress locally in `chrome.storage.local`.
 1. Open `chrome://extensions` in Chrome.
 2. Turn on **Developer mode** (top-right toggle).
 3. Click **Load unpacked**.
-4. Select the project folder: `/Users/jonathanluis/Desktop/wait-and-learn`.
+4. Select the `wait-and-learn` folder you cloned.
 
 After loading, refresh any open claude.ai tab so the content script attaches.
 

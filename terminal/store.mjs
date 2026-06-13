@@ -21,11 +21,41 @@ function tryRequire(candidates) {
   return null;
 }
 
-// The same deck file the extension bundles (module.exports = the deck object).
-export const deck = tryRequire([
-  path.join(HERE, "spanish-starter.js"),                 // flat plugin runtime
-  path.join(HERE, "..", "decks", "spanish-starter.js")   // dev layout
-]);
+// Decks the user has: the bundled free Starter, plus any Pro decks they have
+// unlocked by dropping deck files into ~/.wait-and-learn/decks/. That drop-in
+// folder IS the Pro unlock; no license server, no network call.
+export const decks = (function loadAllDecks() {
+  const out = [];
+  const bundled = tryRequire([
+    path.join(HERE, "spanish-starter.js"),                 // flat plugin runtime
+    path.join(HERE, "..", "decks", "spanish-starter.js")   // dev layout
+  ]);
+  if (bundled && Array.isArray(bundled.cards)) out.push(bundled);
+  const userDir = path.join(os.homedir(), ".wait-and-learn", "decks");
+  try {
+    for (const f of fs.readdirSync(userDir).sort()) {
+      if (!f.endsWith(".js")) continue;
+      try {
+        const d = require(path.join(userDir, f));
+        if (d && Array.isArray(d.cards) && !out.some(function (x) { return x.id === d.id; })) out.push(d);
+      } catch (e) {}
+    }
+  } catch (e) {}
+  return out;
+})();
+
+// The active deck = config.activeDeck if the user has it, else the bundled
+// Starter. statusline/grade read this; switch it with the `deck` command.
+export const deck = (function pickActive() {
+  if (!decks.length) return null;
+  let cfg = {};
+  try { cfg = JSON.parse(fs.readFileSync(path.join(os.homedir(), ".wait-and-learn", "config.json"), "utf8")) || {}; } catch (e) {}
+  if (cfg.activeDeck) {
+    const found = decks.find(function (d) { return d.id === cfg.activeDeck; });
+    if (found) return found;
+  }
+  return decks[0];
+})();
 
 // The same pure Leitner scheduler the extension uses.
 export const Scheduler = tryRequire([
@@ -63,7 +93,7 @@ function writeJson(file, obj) {
 
 // SRS box state: cardId -> { box, dueAt }. One file per deck. Written ONLY by the
 // grader (grade.mjs). Kept separate from exposure (below) so the ~3s status-line
-// writes can never race-clobber a grade — last-writer-wins on a shared file would
+// writes can never race-clobber a grade; last-writer-wins on a shared file would
 // otherwise silently revert a box promotion.
 export function loadSrs(deckId) { return readJson(path.join(DIR, "srs." + safeId(deckId) + ".json"), {}) || {}; }
 export function saveSrs(deckId, map) { return writeJson(path.join(DIR, "srs." + safeId(deckId) + ".json"), map); }

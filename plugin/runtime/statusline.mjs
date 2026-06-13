@@ -45,7 +45,7 @@ try {
     const rc = (prev.revealCount || 0) + 1;
     if (rc >= REVEAL_TICKS) {
       // Exposure memory: record that the finished card was just seen (lastSeen) in
-      // the EXPOSURE file only — never the box file — so this ~3s write can't
+      // the EXPOSURE file only, never the box file, so this ~3s write can't
       // race-revert a grade. pickNext's lastSeen tiebreak then rotates the deck.
       exposure[prev.cardId] = { lastSeen: now };
       saveExposure(deckId, exposure);

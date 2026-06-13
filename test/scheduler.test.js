@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-const Scheduler = require("/Users/jonathanluis/Desktop/wait-and-learn/src/scheduler.js");
+const Scheduler = require("../src/scheduler.js");
 
 const I = Scheduler.INTERVALS;
 

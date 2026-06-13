@@ -21,7 +21,7 @@ Once this repo is pushed to GitHub (or any git host), users run:
 To try it locally without publishing, point at the repo on disk:
 
 ```
-/plugin marketplace add /Users/jonathanluis/Desktop/wait-and-learn
+/plugin marketplace add /path/to/wait-and-learn
 /plugin install wait-and-learn@wait-and-learn
 /wait-and-learn:setup
 ```
@@ -46,6 +46,18 @@ Then **restart Claude Code**.
   - `/wait-and-learn:wl got` - you knew it (it shows up less)
   - `/wait-and-learn:wl missed` - you didn't (it shows up more)
 
+## Decks and languages
+
+- The free plugin ships the Spanish starter deck.
+- List your decks or switch language:
+  - `/wait-and-learn:deck` - list your decks (the active one is marked)
+  - `/wait-and-learn:deck french` - switch the active deck
+- Each deck keeps its own spaced-repetition progress, so switching never loses
+  your place.
+- **Pro decks** (more languages) are delivered as files you drop into
+  `~/.wait-and-learn/decks/`. Anything in that folder loads as a deck. Deck files
+  are JavaScript and run as code, so only add decks you trust.
+
 ## Notes
 
 - Requires **bun or node** on your PATH.
@@ -59,7 +71,7 @@ Then **restart Claude Code**.
 
 ## Layout
 
-- `commands/` - the `/wait-and-learn:setup` and `/wait-and-learn:wl` commands
+- `commands/` - the `setup`, `wl`, and `deck` commands
 - `setup.js` - the installer (run by the setup command)
 - `runtime/` - self-contained copy of the deck, scheduler, and terminal scripts
   (regenerate from source with `./sync.sh`)
