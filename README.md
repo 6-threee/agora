@@ -227,17 +227,19 @@ and `example` is optional. Imported decks are given an id of
   (`new CSSStyleSheet()` + `replaceSync` + `adoptedStyleSheets`). That avoids
   claude.ai's `style-src` Content Security Policy, which can block an injected
   `<style>` text node.
-- **Bundled deck as a JS global, not fetched JSON.** The starter deck ships as
-  `decks/spanish-starter.js`, which assigns the deck object to
-  `WL.__bundledDeck`. Loading it as a script (instead of fetching a `.json`
-  file) avoids needing `web_accessible_resources` and avoids any
-  `connect-src` CSP concern on claude.ai.
+- **Bundled decks as JS globals, not fetched JSON.** The five language decks
+  ship as `decks/{es,fr,de,it,pt}.js`. Each defines a local `deck` and, in a
+  browser, pushes it onto a shared `WL.__decks` list that `DeckStore` reads to
+  populate the language switcher; the same files `module.exports = deck` for the
+  CLI plugin, so the deck data has a single source. Loading them as scripts
+  (instead of fetching a `.json` file) avoids needing `web_accessible_resources`
+  and avoids any `connect-src` CSP concern on claude.ai.
 - The only Claude-specific, fragile code is `src/detector.js`. Everything else
   (scheduler, deck store, card UI) is site-agnostic, so a Claude UI change is a
   one-file fix.
 
 After loading on claude.ai, confirm there are **no CSP errors** in the console.
-The constructable stylesheet and JS-global bundled deck are designed to avoid
+The constructable stylesheet and JS-global bundled decks are designed to avoid
 them.
 
 ## Running the tests
