@@ -167,8 +167,8 @@ not. It prints a one-line confirmation and the status line moves to a fresh card
 - The rhythm state is global (not per-session) so the `wl` command can target the
   shown card. If you run several Claude Code sessions at once they share one
   rhythm; the SRS progress is shared too (one learner), which is what you want.
-- It uses the bundled Spanish deck. Switching decks is a browser-side feature for
-  now.
+- The plugin bundles 5 decks (Spanish, French, German, Italian, Portuguese), 250
+  words each; switch with `/agora:deck <language>`.
 
 ### Sharing it with others
 
