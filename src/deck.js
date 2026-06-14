@@ -1,14 +1,13 @@
 var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
 
 // WL.DeckStore - loads decks and persists SRS state via chrome.storage.local.
-// Bundled deck comes from the WL.__bundledDeck global (not fetched). Imported
+// Bundled decks come from the WL.__decks global list (not fetched). Imported
 // decks live under wl.decks. SRS state under wl.srs.<deckId>. Active deck id
 // under wl.activeDeck. Never throws into the page: on any storage error it logs
 // to console and continues with in-memory state.
 
 (function () {
-  var BUNDLED_DECK_ID = "bundled:spanish-starter";
-  var DEFAULT_ACTIVE_DECK = BUNDLED_DECK_ID;
+  var DEFAULT_ACTIVE_DECK = "bundled:spanish";
 
   // In-memory state, populated by init().
   var activeDeckId = DEFAULT_ACTIVE_DECK;
@@ -73,13 +72,15 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
 
   // --- internal helpers ---
 
-  function bundledDeck() {
-    return (typeof WL !== "undefined" && WL.__bundledDeck) ? WL.__bundledDeck : null;
+  function bundledDecks() {
+    return (typeof WL !== "undefined" && Array.isArray(WL.__decks)) ? WL.__decks : [];
   }
 
   function deckById(deckId) {
-    var bundled = bundledDeck();
-    if (bundled && bundled.id === deckId) return bundled;
+    var bundled = bundledDecks();
+    for (var i = 0; i < bundled.length; i++) {
+      if (bundled[i] && bundled[i].id === deckId) return bundled[i];
+    }
     if (importedDecks && Object.prototype.hasOwnProperty.call(importedDecks, deckId)) {
       return importedDecks[deckId];
     }
@@ -175,13 +176,15 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
   function listDecks() {
     return Promise.resolve().then(function () {
       var decks = [];
-      var bundled = bundledDeck();
-      if (bundled) {
+      var bundled = bundledDecks();
+      for (var i = 0; i < bundled.length; i++) {
+        var b = bundled[i];
+        if (!b) continue;
         decks.push({
-          id: bundled.id,
-          name: bundled.name,
-          lang: bundled.lang,
-          count: Array.isArray(bundled.cards) ? bundled.cards.length : 0
+          id: b.id,
+          name: b.name,
+          lang: b.lang,
+          count: Array.isArray(b.cards) ? b.cards.length : 0
         });
       }
       for (var id in importedDecks) {

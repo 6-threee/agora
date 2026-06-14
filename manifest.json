@@ -1,13 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Agora: Flashcards while Claude thinks",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Turns Claude.ai thinking time into spaced-repetition language flashcards.",
   "permissions": ["storage"],
   "host_permissions": ["https://claude.ai/*"],
   "content_scripts": [{
     "matches": ["https://claude.ai/*"],
-    "js": ["src/scheduler.js","decks/spanish-starter.js","src/deck.js","src/detector.js","src/speech.js","src/card.js","src/content.js"],
+    "js": ["src/scheduler.js","decks/es.js","decks/fr.js","decks/de.js","decks/it.js","decks/pt.js","src/deck.js","src/detector.js","src/speech.js","src/card.js","src/content.js"],
     "run_at": "document_idle",
     "all_frames": false
   }],

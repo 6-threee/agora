@@ -257,3 +257,4 @@ var deck = {
   ]
 };
 if (typeof module !== "undefined" && module.exports) module.exports = deck;
+if (typeof window !== "undefined") { var WL = (window.WL = window.WL || {}); (WL.__decks = WL.__decks || []).push(deck); }

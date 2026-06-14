@@ -159,9 +159,15 @@ var WL = (typeof window !== "undefined") ? (window.WL = window.WL || {}) : {};
         if (res && typeof res["wl.speakAuto"] === "boolean") speakAuto = res["wl.speakAuto"];
       });
       chrome.storage.onChanged.addListener(function (changes, area) {
-        if (area === "local" && changes["wl.speakAuto"]) {
+        if (area !== "local") return;
+        if (changes["wl.speakAuto"]) {
           var nv = changes["wl.speakAuto"].newValue;
           if (typeof nv === "boolean") speakAuto = nv;
+        }
+        // Live language switch from the options page: re-point the active deck
+        // so the next card comes from the newly selected language.
+        if (changes["wl.activeDeck"]) {
+          WL.DeckStore.setActiveDeck(changes["wl.activeDeck"].newValue).catch(function () {});
         }
       });
     } catch (e) {
