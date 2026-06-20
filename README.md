@@ -116,8 +116,9 @@ selectors are confirmed.
 The browser card needs a web page, so it cannot run in Claude Code in the
 terminal. The terminal version is a **status-line** flashcard instead, in Claude
 Code's bottom bar. It reads the **same deck** and runs the **same Leitner
-scheduler** as the browser (with its own state under `~/.agora/`,
-separate from the browser's storage).
+scheduler** as the browser, but it keeps its own progress under `~/.agora/`,
+separate from the browser extension's `chrome.storage.local`. The two never
+share progress, so if you run both you start fresh in each.
 
 What it does:
 

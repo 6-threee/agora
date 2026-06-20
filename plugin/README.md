@@ -61,14 +61,16 @@ Then **restart Claude Code**.
 ## Notes
 
 - Requires **bun or node** on your PATH.
-- Progress is separate from the browser extension (a status line can't reach
-  Chrome's storage, and vice versa). Same algorithm, two scorecards.
+- Progress is separate from the browser extension. The plugin stores its
+  spaced-repetition progress in `~/.agora/`; the extension stores its own in
+  `chrome.storage.local`. A status line can't reach Chrome's storage, and vice
+  versa, so if you install both you start fresh in each. Same algorithm, two
+  scorecards.
 - Uninstalling the plugin leaves `~/.agora/` in place; delete it by hand
   to remove progress, and restore your old status line from the
   `~/.claude/settings.json.wl-backup` if you want.
-- Ships 5 bundled decks (Spanish, French, German, Italian, Portuguese), 250
-  words each. Switch with `/agora:deck <language>`. To change the rotation
-  interval, edit `refreshInterval` under `statusLine` in `~/.claude/settings.json`.
+- To change the rotation interval, edit `refreshInterval` under `statusLine`
+  in `~/.claude/settings.json`.
 
 ## Support
 

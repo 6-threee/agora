@@ -26,7 +26,7 @@ learning more often.
 - Hear the word pronounced with your computer's built-in voices
 - Cards keep coming for the whole time Claude is thinking
 - Bring your own deck: import any language as a simple JSON word list
-- Ships with a 40-word Spanish starter deck
+- Ships with 5 bundled decks (Spanish, French, German, Italian, Portuguese), 500 words each
 
 Nothing leaves your device. No account, no tracking, no servers. The extension only runs on
 claude.ai and only stores your review progress in local browser storage.
@@ -47,13 +47,16 @@ claude.ai and only stores your review progress in local browser storage.
 ## Asset checklist
 - [x] Icon 128x128 PNG (`icons/icon128.png`) plus 16/32/48 in the manifest.
 - [ ] At least one screenshot, **1280x800** or **640x400** PNG/JPG. Capture the floating card on a
-      real claude.ai page while Claude is generating. (The harness shots under `/tmp` are for QA,
-      not the listing.)
-- [ ] Small promo tile **440x280** (optional but recommended).
-- [ ] Privacy policy URL if required by the dashboard (a short page stating "no data collected,
-      all storage is local" suffices).
+      real claude.ai page while Claude is generating. (Still needs creating. The harness shots under
+      `/tmp` are for QA, not the listing.)
+- [ ] Small promo tile **440x280** (optional but recommended). Still needs creating.
+- [ ] Privacy policy URL if required by the dashboard. `PRIVACY.md` exists in the repo with the
+      "no data collected, all storage is local" statement; it still needs hosting at a public URL
+      to paste into the dashboard.
 
 ## Notes
 - Each claude.ai DOM change that breaks the detector selector means publishing an update (re-review
   each time). For personal use, load-unpacked avoids this entirely.
-- Bump `version` in `manifest.json` for every store update (currently 0.2.0).
+- Bump `version` in `manifest.json` for every store update (currently 0.4.0).
+</content>
+</invoke>
