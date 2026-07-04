@@ -40,6 +40,15 @@ PRODUCTS = {
                  "travel and survival, and common idioms), each with an example "
                  "in context, as an importable Agora deck.",
     },
+    "slang": {
+        "sources": ["slang.json"],
+        "name": "Mexican Slang",
+        "deck_id": "paid:mexican-slang",
+        "basename": "es-slang",
+        "blurb": "Real Mexican slang, expressions, and profanity that people "
+                 "actually use, each with an example in context. How Mexicans "
+                 "actually talk, as an importable Agora deck. Adult content.",
+    },
 }
 
 def emit_deck_js(cards, name, deck_id):

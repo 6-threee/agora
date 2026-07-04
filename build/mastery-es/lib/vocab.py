@@ -23,6 +23,12 @@ def parse_vocab_json(text):
     text = text.strip()
     text = re.sub(r"^```[a-zA-Z]*\n?", "", text)
     text = re.sub(r"\n?```$", "", text).strip()
+    # extract the JSON array even if the model wrapped it in prose
+    a, b = text.find("["), text.rfind("]")
+    if a != -1 and b > a:
+        text = text[a:b + 1]
+    # tolerate trailing commas before } or ]
+    text = re.sub(r",(\s*[}\]])", r"\1", text)
     try:
         data = json.loads(text)
     except json.JSONDecodeError:
