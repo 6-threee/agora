@@ -31,6 +31,18 @@ for status-line mode.)
 - `/agora:study` — pop a spaced-repetition review session into its own terminal (recall → reveal → grade)
 - `/agora:pause` / `/agora:resume` — hide/show the cards during deep focus
 
+## Premium decks — Mexican Spanish
+
+The bundled decks are free and always will be. If you want to go deeper, there
+are optional paid Mexican Spanish decks that drop into Agora the same way:
+
+- **Spanish Mastery** ($29) — around 3,600 cards: core vocabulary with examples, Mexican slang, and verb conjugations.
+- **Spanish Phrases** ($19) — about 300 real Mexican phrases for conversation, travel, and idioms.
+- **Mexican Slang** ($19) — 255 cards of how Mexicans actually talk.
+
+Get them on Gumroad: **https://myaibiz.gumroad.com** — download the deck file,
+drop it into `~/.agora/decks/`, then run `/agora:deck <name>`.
+
 ### Support
 
 Agora is free and always will be. If it helps you, pay what you want (including

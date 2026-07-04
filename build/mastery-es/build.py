@@ -28,9 +28,10 @@ PRODUCTS = {
         "deck_id": "paid:spanish-mastery",
         "basename": "es-mastery-2000",
         "price": 29,
-        "blurb": "About 2,000 core Spanish words (with example sentences), a "
-                 "slang and profanity section, and about 10,000 verb conjugations, "
-                 "as a single importable Agora deck.",
+        "blurb": "Around 3,600 cards of Mexican Spanish in one deck: about 2,000 "
+                 "core words with example sentences, a 250-card Mexican slang and "
+                 "profanity section, and roughly 1,600 verb conjugations. The "
+                 "complete pack. Adult content.",
     },
     "phrases": {
         "sources": ["phrases.json"],
@@ -38,9 +39,9 @@ PRODUCTS = {
         "deck_id": "paid:spanish-phrases",
         "basename": "es-phrases",
         "price": 19,
-        "blurb": "Hundreds of useful Spanish phrases (everyday conversation, "
-                 "travel and survival, and common idioms), each with an example "
-                 "in context, as an importable Agora deck.",
+        "blurb": "About 300 useful Mexican Spanish phrases: everyday conversation, "
+                 "travel and survival, and common Mexican idioms and dichos, each "
+                 "with an example in context.",
     },
     "slang": {
         "sources": ["slang.json"],
@@ -48,9 +49,9 @@ PRODUCTS = {
         "deck_id": "paid:mexican-slang",
         "basename": "es-slang",
         "price": 19,
-        "blurb": "Real Mexican slang, expressions, and profanity that people "
-                 "actually use, each with an example in context. How Mexicans "
-                 "actually talk, as an importable Agora deck. Adult content.",
+        "blurb": "255 cards of real Mexican slang, expressions, and profanity "
+                 "that people actually use in Mexico, each with an example in "
+                 "context. How Mexicans really talk. Adult content.",
     },
 }
 

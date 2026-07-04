@@ -27,6 +27,7 @@ learning more often.
 - Cards keep coming for the whole time Claude is thinking
 - Bring your own deck: import any language as a simple JSON word list
 - Ships with 5 bundled decks (Spanish, French, German, Italian, Portuguese), 500 words each
+- Optional premium Mexican Spanish decks available separately (vocabulary, phrases, and slang)
 
 Nothing leaves your device. No account, no tracking, no servers. The extension only runs on
 claude.ai and only stores your review progress in local browser storage.
