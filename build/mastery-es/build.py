@@ -27,6 +27,7 @@ PRODUCTS = {
         "name": "Spanish Mastery",
         "deck_id": "paid:spanish-mastery",
         "basename": "es-mastery-2000",
+        "price": 29,
         "blurb": "About 2,000 core Spanish words (with example sentences), a "
                  "slang and profanity section, and about 10,000 verb conjugations, "
                  "as a single importable Agora deck.",
@@ -36,6 +37,7 @@ PRODUCTS = {
         "name": "Spanish Phrases",
         "deck_id": "paid:spanish-phrases",
         "basename": "es-phrases",
+        "price": 19,
         "blurb": "Hundreds of useful Spanish phrases (everyday conversation, "
                  "travel and survival, and common idioms), each with an example "
                  "in context, as an importable Agora deck.",
@@ -45,6 +47,7 @@ PRODUCTS = {
         "name": "Mexican Slang",
         "deck_id": "paid:mexican-slang",
         "basename": "es-slang",
+        "price": 19,
         "blurb": "Real Mexican slang, expressions, and profanity that people "
                  "actually use, each with an example in context. How Mexicans "
                  "actually talk, as an importable Agora deck. Adult content.",
