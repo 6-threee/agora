@@ -6,12 +6,15 @@ from lib.vocab import parse_vocab_json
 
 os.makedirs("dist", exist_ok=True)
 
-PHRASE_PROMPT = """You are building a Spanish phrases flashcard deck for learners.
+PHRASE_PROMPT = """You are building a MEXICAN SPANISH phrases flashcard deck for
+learners. Everything must be how people actually talk in MEXICO: Mexican wording,
+"ustedes" never "vosotros", Mexican expressions and courtesy forms (mande, ahorita,
+que tenga bonito dia). Do not use Spain phrasing.
 
-Output {n} useful Spanish {desc}. For EACH, output one JSON object:
-- "front": the Spanish phrase
+Output {n} useful Mexican Spanish {desc}. For EACH, output one JSON object:
+- "front": the Mexican Spanish phrase
 - "back": its English meaning
-- "example": a natural Spanish sentence or short exchange using the phrase
+- "example": a natural Mexican Spanish sentence or short exchange using the phrase
 - "exampleEn": the English translation of that example
 
 Output a JSON array and NOTHING else: no markdown, no code fences, no
@@ -19,13 +22,16 @@ commentary. No duplicates. Variation tag (ignore in output): {tag}
 """
 
 CATEGORIES = [
-    ("everyday conversational phrases: greetings, small talk, ordering, asking "
-     "directions, reactions, and connective filler chunks like 'o sea', "
-     "'de hecho', 'la verdad es que'", ["greetings-smalltalk", "reactions", "connectors"]),
-    ("travel and survival phrases: airport, hotel, restaurant, taxi, shopping, "
-     "and emergencies", ["airport-hotel", "food-shopping-emergency"]),
-    ("common idioms and colorful expressions (modismos), with the figurative "
-     "meaning in the back field", ["idioms-a", "idioms-b"]),
+    ("everyday conversational phrases as spoken in Mexico: greetings, small talk, "
+     "ordering food/drinks, asking directions, reactions, and Mexican filler "
+     "chunks like 'o sea', 'la neta', 'ni modo', 'ahorita', 'que onda'",
+     ["greetings-smalltalk", "reactions", "connectors"]),
+    ("travel and survival phrases for a trip to Mexico: airport, hotel, taquerias "
+     "and restaurants, taxi/Uber, markets and shopping, and emergencies",
+     ["airport-hotel", "food-shopping-emergency"]),
+    ("common MEXICAN idioms, dichos, and colorful expressions (no manches, me vale, "
+     "aguas, echar la mano), with the figurative meaning in the back field",
+     ["idioms-a", "idioms-b"]),
 ]
 
 cards, seen = [], set()

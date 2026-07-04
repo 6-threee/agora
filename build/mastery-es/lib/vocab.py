@@ -2,12 +2,14 @@ import json, re
 from lib.schema import Card
 from lib.llm import ask, chunks
 
-PROMPT = """You are building a Spanish vocabulary flashcard deck.
+PROMPT = """You are building a MEXICAN SPANISH vocabulary flashcard deck.
 
 For EACH Spanish word form below, output one JSON object with:
 - "front": the exact Spanish word form as given
-- "back": its most common English translation (short)
-- "example": one natural Spanish sentence using the word
+- "back": its most common English translation as used in Mexico (short; if Mexico
+  prefers a different everyday word, note it briefly, e.g. "car (Mex: carro)")
+- "example": one natural sentence in MEXICAN Spanish (Mexican vocabulary and
+  phrasing; use "ustedes", never "vosotros")
 - "exampleEn": the English translation of that sentence
 
 Output a JSON array of these objects and NOTHING else: no markdown, no code
@@ -32,7 +34,7 @@ def parse_vocab_json(text):
                               o.get("example", ""), o.get("exampleEn", "")))
     return cards
 
-def generate_vocab(forms, batch=25):
+def generate_vocab(forms, batch=100):
     cards = []
     for group in chunks(forms, batch):
         text = ask(PROMPT.format(words="\n".join(group)))

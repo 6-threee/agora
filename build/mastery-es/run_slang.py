@@ -6,16 +6,17 @@ from lib.vocab import parse_vocab_json
 
 os.makedirs("dist", exist_ok=True)
 
-SLANG_PROMPT = """You are building the slang and profanity section of a Spanish
-vocabulary deck for adult learners. These are words people actually hear.
+SLANG_PROMPT = """You are building the slang and profanity section of a MEXICAN
+SPANISH vocabulary deck for adult learners. These are words people actually hear
+IN MEXICO (guey, no manches, orale, chido, neta, pinche, mamada, verga, chingar
+and its family, naco, fresa, etc.). Do not use Spain slang.
 
-Output {n} common Spanish slang terms, curse words, insults, and vulgar
-expressions (mix mild to strong; include some regional ones). For EACH, output
-one JSON object:
-- "front": the Spanish term or expression
+Output {n} common Mexican Spanish slang terms, curse words, insults, and vulgar
+expressions (mix mild to strong). For EACH, output one JSON object:
+- "front": the Mexican Spanish term or expression
 - "back": its English meaning (short; add a brief note in parentheses when
-  useful, e.g. "(vulgar)", "(Spain)", "(Mexico)")
-- "example": one natural Spanish sentence using it
+  useful, e.g. "(vulgar)", "(very informal)")
+- "example": one natural sentence in Mexican Spanish using it
 - "exampleEn": the English translation of that sentence
 
 Output a JSON array and NOTHING else: no markdown, no code fences, no
