@@ -1,1 +1,3 @@
 dist/
+_private/
+__pycache__/
